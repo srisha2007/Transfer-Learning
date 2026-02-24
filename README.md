@@ -2,70 +2,111 @@
 ## Aim
 To Implement Transfer Learning for classification using VGG-19 architecture.
 ## Problem Statement and Dataset
-Include the problem statement and Dataset
-</br>
-</br>
-</br>
+
+Develop an image classification model using transfer learning with the pre-trained VGG19 model
 
 ## DESIGN STEPS
 ### STEP 1:
-</br>
+Import required libraries, load the dataset, and define training & testing datasets.
 
 ### STEP 2:
-</br>
+Initialize the model, loss function, and optimizer. Use CrossEntropyLoss for multi-class classification and Adam optimizer for efficient training.
 
 ### STEP 3:
 
-Write your own steps
-<br/>
+Train the model using the training dataset with forward and backward propagation.
+
+### STEP 4:
+
+Evaluate the model on the testing dataset to measure accuracy and performance.
+
+### STEP 5:
+Make predictions on new data using the trained model
 
 ## PROGRAM
 Include your code here
-```python
+```
 # Load Pretrained Model and Modify for Transfer Learning
 
-
+from torchvision.models import VGG19_Weights
+model=models.vgg19(weights=VGG19_Weights.DEFAULT)
 
 # Modify the final fully connected layer to match the dataset classes
 
-
+num_classes = len(train_dataset.classes)
+model.classifier[6] = nn.Linear(4096, num_classes)
 
 # Include the Loss function and optimizer
 
-
-
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.classifier[-1].parameters(), lr=0.001)
 
 # Train the model
 
+def train_model(model, train_loader,test_loader,num_epochs=10):
+    train_losses = []
+    val_losses = []
+    model.train()
+    for epoch in range(num_epochs):
+        running_loss = 0.0
+        for images, labels in train_loader:
+            images, labels = images.to(device), labels.to(device)
+            optimizer.zero_grad()
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            running_loss += loss.item()
+        train_losses.append(running_loss / len(train_loader))
+
+        # Compute validation loss
+        model.eval()
+        val_loss = 0.0
+        with torch.no_grad():
+            for images, labels in test_loader:
+                images, labels = images.to(device), labels.to(device)
+                outputs = model(images)
+                loss = criterion(outputs, labels)
+                val_loss += loss.item()
+
+        val_losses.append(val_loss / len(test_loader))
+        model.train()
+
+        print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_losses[-1]:.4f}, Validation Loss: {val_losses[-1]:.4f}')
+    # Plot training and validation loss
+    print("Name: SRISHA")
+    print("Register Number: 212224040328")
+    plt.figure(figsize=(8, 6))
+    plt.plot(range(1, num_epochs + 1), train_losses, label='Train Loss', marker='o')
+    plt.plot(range(1, num_epochs + 1), val_losses, label='Validation Loss', marker='s')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.title('Training and Validation Loss')
+    plt.legend()
+    plt.show()
 
 
-```
+
+````
+
+
 
 ## OUTPUT
 ### Training Loss, Validation Loss Vs Iteration Plot
-Include your plot here
-</br>
-</br>
-</br>
+<img width="937" height="769" alt="Screenshot 2026-02-24 120206" src="https://github.com/user-attachments/assets/02b13aa6-0f4e-4ea9-ad2b-cffc7b4ab55b" />
+
 
 ### Confusion Matrix
-Include confusion matrix here
-</br>
-</br>
-</br>
+<img width="751" height="824" alt="Screenshot 2026-02-24 120215" src="https://github.com/user-attachments/assets/dced8996-e8b7-4ea3-84f0-2fd67b40e869" />
+
 
 ### Classification Report
-Include Classification Report here
-</br>
-</br>
-</br>
+<img width="527" height="462" alt="Screenshot 2026-02-24 120222" src="https://github.com/user-attachments/assets/ee6c0f90-6e77-4453-9726-2d21a15ca03e" />
+
 
 ### New Sample Prediction
-</br>
-</br>
-</br>
+<img width="495" height="462" alt="Screenshot 2026-02-24 120228" src="https://github.com/user-attachments/assets/c710792a-0daf-48fd-b127-0587763a4538" />
+
 
 ## RESULT
-</br>
-</br>
-</br>
+Thus, the Transfer Learning for classification using the VGG-19 architecture has been successfully implemented.
